@@ -1,0 +1,535 @@
+﻿@model Tedarix.Areas.ManagementPanel.Models.FoyDto
+@{
+    Layout = "_Layout";
+
+    int foyId = Convert.ToInt32(ViewBag.FoyId);
+}
+
+<style>
+    /* Seçili durum için stil */
+    .custom-checkbox .custom-control-input:checked ~ .custom-control-label::before {
+        background-color: green; /* Yeşil renk */
+        border-color: green; /* Yeşil renk */
+    }
+
+    /* Seçili olmayan durum için stil */
+    .custom-checkbox .custom-control-input:not(:checked) ~ .custom-control-label::before {
+        background-color: #dc3545; /* Kırmızı renk */
+        border-color: #dc3545; /* Kırmızı renk */
+    }
+</style>
+@{
+    var kesimCount = Model.FoyAndKesim.Count();
+    var cinsCounter = Model.FoyAndCins.Count() * 2;
+}
+
+<div class="card card-warning">
+    <div class="card-header">
+        <h3 class="card-title">Ürün tanımlama</h3>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+        <form>
+            <div class="row">
+                <div class="col-sm-4">
+                    <!-- text input -->
+                    <div class="form-group">
+                        <label>Model Numarası</label>
+                        <input id="modelNumarasi" value="@Model.Foy.ModelCode" type="text" class="form-control" placeholder="Model Kodu Girin..">
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <!-- text input -->
+                    <div class="form-group">
+                        <label>Firma Adı</label>
+                        <select class="form-control" id="selectTenant" name="selectTenant">
+
+                            @foreach (var item in (List<Tedarix.Models.Entities.Tenant>)ViewBag.Tenant)
+                            {
+                                if (Model.Foy.TenantId == item.Id)
+                                {
+                                    <option value="@item.Id" selected>@item.Name</option>
+
+                                }
+                                else
+                                {
+                                    <option value="@item.Id">@item.Name</option>
+
+                                }
+                            }
+                        </select>
+                     
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <!-- text input -->
+                    <div class="form-group">
+                        <label>Yaş Grubu</label>
+                        <input id="yas" value="@Model.Foy.Age" type="text" class="form-control" placeholder="Yaş Girin ...">
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <!-- /.card-body -->
+</div>
+
+<div class="card card-info col-sm-6 fa-pull-left" style="margin-right: 23px !important;width: 48% !important;">
+    <div class="card-header  col-sm-12">
+        <h3 class="card-title">Renk Ekle</h3>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body col-md-12  col-sm-6">
+        <form>
+            <button type="button" id="addButton" class="btn btn-primary m-2">Ekle</button>
+            <div class="row" id="adetRenk">
+                @foreach (var item in Model.FoyAndColor)
+                {
+                    <div class="col-sm-6" id='sil_@item.Id'>
+                        <div class="form-group">
+                            <label>Renk</label>
+                            <input id="renk_@item.Id" type="text" value="@item.Renk" class="form-control" placeholder="Renk giriniz ...">
+                        </div>
+                    </div>
+                    <div class="col-sm-4" id='sil2_@item.Id'>
+                        <div class="form-group">
+                            <label>Adet</label>
+                            <input id="adet_@item.Id" type="number" value="@item.Adet" class="form-control" placeholder="adet giriniz ...">
+                        </div>
+                    </div>
+                    <div class="col-sm-2" id='sil3_@item.Id'>
+                        <label>İşlem Yap</label>
+                        <br>
+                        <button type="button" class=" btn btn-danger " onclick="htmlSil('@item.Id','@item.Id')">Sil</button>
+                    </div>
+                }
+            </div>
+        </form>
+    </div>
+    <!-- /.card-body -->
+</div>
+<div class="card card-info col-sm-6 ">
+    <div class="card-header  col-sm-12">
+        <h3 class="card-title">KESİM</h3>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body  col-sm-12">
+        <form>
+
+            @foreach (var item in (List<Tedarix.Models.Entities.Kesim>)ViewBag.Kesimler)
+            {
+
+                var kesimim = Model.FoyAndKesim.FirstOrDefault(a => a.KesimId == item.Id);
+
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <!-- text input -->
+                        <div class="form-group col-sm-12 row">
+                            <div class="custom-control custom-checkbox fa-pull-left  col-sm-3">
+                                <input style="margin-left:10px " class="custom-control-input " type="checkbox" id="kesims_@item.Id" @(kesimim != null ? kesimim.State ? "checked=checked" : "" : "")>
+                                <span id="kesimId_@item.Id" class="form-control" hidden>@item.Id</span>
+                                <label for="kesims_@item.Id" class="custom-control-label">@item.Name</label>
+                            </div>
+
+                         @*    @if (kesimim != null && kesimim.RegisterDate.ToString() == "1.01.0001 00:00:00")
+                            {
+                                <div class="form-group col-sm-4">
+                                    <input type="datetime-local"
+                                           id="kesimTarihi_@item.Id"
+                                           name="kesimTarihi_@item.Id"
+                                           value="@(kesimim!=null?kesimim.RegisterDate:"")"
+                                           min="2023-06-07T00:00"
+                                           max="2099-06-14T00:00" />
+                                </div>
+                            }
+                            else if (kesimim == null)
+                            {
+                                <div class="form-group col-sm-4">
+                                    <input type="datetime-local"
+                                           id="kesimTarihi_@item.Id"
+                                           name="kesimTarihi_@item.Id"
+                                           min="2023-06-07T00:00"
+                                           max="2099-06-14T00:00" />
+                                </div>
+                            }
+                            else
+                            {
+                            } *@
+                            @if (kesimim.RegisterDate.ToString() == "1.01.0001 00:00:00")
+                            {
+
+                                <div class="form-group col-6 form-control" style="border:none">
+                                    <span >
+                                        <i class="fa fa-clock"></i>
+                                        <b>Tamamlanmadı</b>
+
+                                    </span>
+                                </div>
+                             
+                            }
+                            else
+                            {
+
+                                <span class="form-control  col-8" style="border:none">
+                                    <i class="fa fa-clock"></i>
+                                    <b>İşlem zamanı</b> / @kesimim.RegisterDate
+
+                                </span>
+                            }
+                            @**********************@
+                            @*******ADMİNSE GÜNCELLEME ALANI OLSUN ***************@
+                            @**********************@
+
+                        </div>
+                    </div>
+                </div>
+            }
+            
+        </form>
+    </div>
+    <!-- /.card-body -->
+</div>
+<div class="card card-danger col-sm-6" style="float:right">
+    <div class="card-header">
+        <h3 class="card-title">Cins</h3>
+    </div>
+    <div class="card-body ">
+        <form>
+            <div class="row">
+                <div class="col-sm-3">
+                    <label>Cins</label>
+                    <!-- text input -->
+                    @foreach (var item in (List<Tedarix.Models.Entities.Cins>)ViewBag.Cins)
+                    {
+                        <div class="form-group">
+                            <span id="cinsAdi_@item.Id" class="form-control">@item.Name</span>
+                            <span id="cinsId_@item.Id" class="form-control" hidden>@item.Id</span>
+                        </div>
+                    }
+
+                </div>
+                <div class="col-sm-2">
+                    <label>Renk</label>
+                    @foreach (var item in Model.FoyAndCins)
+                    {
+                        <div class="form-group">
+                            <input id="cinsRenk_@item.CinsId" value="@item.RenkAdi" type="text" class="form-control" placeholder="Renk Adi ...">
+                        </div>
+                    }
+
+                </div>
+                <div class="col-sm-2">
+                    <label>Durumu</label>
+                    <!-- text input -->
+                    @foreach (var item in Model.FoyAndCins)
+                    {
+                        <div class="form-group">
+                            <div class="custom-control custom-checkbox  form-control  col-sm-12" style="border:none !important ;margin-left: 25px;width: 25px;">
+                                <input style="margin-left:40px " class="custom-control-input " type="checkbox" id="cinsDurums_@item.CinsId" @(item.State ? "checked=checked" : "")>
+                                <label for="cinsDurums_@item.CinsId" class="custom-control-label"> </label>
+                            </div>
+                        </div>
+                    }
+
+                </div>
+
+                <div class="col-sm-5">
+                    <label>İşlem zamanı</label>
+                    @foreach (var item in Model.FoyAndCins)
+                    {
+                        @if (item.RegisterDate.ToString() == "1.01.0001 00:00:00")
+                        {
+                          @*   <div class="form-group">
+
+                                <input class="form-control" type="datetime-local"
+                                       id="durumTarihi_@item.CinsId"
+                                       name="durumTarihi_@item.CinsId"
+                                       value="@item.RegisterDate"
+                                       min="2023-06-07T00:00"
+                                       max="2099-06-14T00:00" />
+
+                            </div> *@
+                            <div class="form-group">
+                                <div class="input-group form-control" style="border:none">
+                                    <span class="input-group-addon ">
+                                        <i class="fa fa-clock" style="margin-right:10px"></i>
+                                    </span>
+                                    <b>Tamamlanmadı</b> 
+                                </div>
+                            </div>
+                        }
+                        else
+                        {
+                          
+                            @* <div class="form-group">
+                                <div class="input-group">
+                                    <span class="input-group-addon">
+                                        <i class="fa fa-clock" style="margin-top:10px"></i> 
+                                    </span>
+                                    @Html.EditorFor(model => item.RegisterDate, new { htmlAttributes = new { @class = "form-control",@style = "border:none",@id="durumTarihi_"+item.CinsId } })
+                                </div>
+                            </div>
+ *@
+
+                         <div class="form-group">
+                                <div class="input-group form-control" style="border:none">
+                                    <span class="input-group-addon ">
+                                        <i class="fa fa-clock" style="margin-right:10px"></i>
+                                    </span>
+                                        @* <b>İşlem zamanı</b> / *@ @item.RegisterDate
+                                </div>
+                            </div>
+                         
+                        }
+
+                    }
+
+                </div>
+            </div>
+
+
+        </form>
+    </div>
+</div>
+
+<div class="card  col-sm-12">
+    <div class="card-header">
+        <h2 class="card-title"> <b>Atolye Bilgisi</b></h2>
+    </div>
+    <div class="card-body ">
+        <div class="alert alert-warning alert-dismissible" style="text-align:center">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+            <h5><i class="icon fas fa-exclamation-triangle"></i> ÖNEMLİ!</h5>
+            ATOLYE İŞLEMİNİ ŞİMDİ YA DA TÜM İŞLEMLER TAMAMLANDIĞINDA SEÇEBİLİRSİNİZ!!
+        </div>
+        <center>
+            <form>
+                <div class="row">,
+                    <div class="col-sm-5">
+                    </div>
+                    <div class="col-sm-2">
+                        <label>ATOLYE</label>
+                        <select class="form-control" id="selectAtolye" name="selectAtolye">
+                            <option>Atolye Seç</option>
+                            @foreach (var item in (List<Tedarix.Models.Entities.Atolye>)ViewBag.Atolye)
+                            {
+                                if (Model.Foy.AtolyeId == item.Id)
+                                {
+                                    <option value="@item.Id" selected>@item.Name</option>
+                                }
+                                else
+                                {
+                                    <option value="@item.Id">@item.Name</option>
+
+                                }
+                            }
+                        </select>
+                        <!-- text input -->
+                    </div>
+
+                </div>
+
+                <div class="row mt-3">
+                    <div class="col-sm-12">
+                        <label>SEVK DURUMU</label>
+                        <div class="form-group">
+                            <div class="custom-control custom-checkbox  form-control  col-sm-12" style="border:none !important ;">
+                                <input style="margin-left:40px " class="custom-control-input" name="SevkeHazir" type="checkbox" id="SevkeHazir" @(Model.Foy.SevkeHazir.HasValue ? (Model.Foy.SevkeHazir.Value ? "checked=checked" : "") : "")>
+                                <label for="SevkeHazir" class="custom-control-label">Sevk Edilmeye Hazır mı? </label>
+                            </div>
+                        </div>
+                    </div>
+
+                </div> 
+                <div class="row mt-3">
+                    <div class="col-sm-12">
+                        <label>Foy Tamamlama Durumu</label>
+                        <div class="form-group">
+                            <div class="custom-control custom-checkbox  form-control  col-sm-12" style="border:none !important ;">
+                                <input style="margin-left:40px " class="custom-control-input" name="Tamamlandi" type="checkbox" id="Tamamlandi" @(Model.Foy.Tamamlandi.HasValue ? (Model.Foy.Tamamlandi.Value ? "checked=checked" : "") : "")>
+                                <label for="Tamamlandi" class="custom-control-label">Tamamlandı mı? </label>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <button type="button" class="btn btn-primary btn-md fa-pull-right" onclick="Tamamla()">İşlemi Kaydet <i style="margin-left:5px" class="fas fa-save"></i></button>
+
+            </form>
+        </center>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+
+@section Scripts{
+    <script>
+        function htmlSil(sira, colorId) {
+            swal({
+                title: "Dikkat?",
+                text: "Silmek istiyor musunuz!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+                buttons: ["Hayır", "Evet"],
+            }).then((willDelete) => {
+                if (willDelete) {
+                  
+                            document.getElementById('sil_' + sira).innerHTML = "";
+                            document.getElementById('sil2_' + sira).innerHTML = "";
+                            document.getElementById('sil3_' + sira).innerHTML = "";
+
+                            $.ajax({
+                                url: '@Url.Action("DeleteFoyColor","Foys",new{area="ManagementPanel"})?foyId=' + '@Model.Foy.Id' + '&colorId=' + colorId,
+                                success: function () {
+
+                                }
+                            })
+                }
+            });
+           
+
+        }
+        var counter = parseInt('@Model.FoyAndColor.LastOrDefault().Id') * 2;
+        document.getElementById("addButton").addEventListener("click", function () {
+            var html = `<div class="col-sm-6" id='sil_${counter}'><div class="form-group"><label>Renk</label><input id="renk_${counter}" type="text" class="form-control" placeholder="Renk ..."></div> </div><div class="col-sm-4" id='sil2_${counter}'><div class="form-group"><label>Adet</label><input  id="adet_${counter}" type="number" class="form-control" placeholder="Adet ..."></div></div><div class="col-sm-2" id='sil3_${counter}'><label>İşlem Yap</label><br><button  type='button' class=' btn btn-danger' onclick='htmlSil(${counter},0)'>Sil</button></div>`;
+            var adetRenkElement = document.getElementById("adetRenk");
+            $('#adetRenk').append(html);
+            //adetRenkElement.innerHTML +=  html;
+            counter++;
+        });
+      
+        function Tamamla() {
+            swal({
+                title: "Lütfen Bekleyin!",
+                text: "Güncelleme Yapılıyor...",
+                icon: "info",
+                buttons: false, // Tüm butonları gizlemek için
+                dangerMode: true,
+                showCancelButton: false, // İptal butonunu gizlemek için
+                showConfirmButton: false, // Onay butonunu gizlemek için
+                allowOutsideClick: false,
+                closeOnClickOutside: false,
+            });
+            const currentDate = new Date();
+            var foy = {
+                ModelCode: $('#modelNumarasi').val(),
+                TenantId: document.getElementById("selectTenant").value,
+                Age: $('#yas').val(),
+                RegisterDate: currentDate,
+                Id: '@Model.Foy.Id',
+                AtolyeId: document.getElementById("selectAtolye").value,
+                SevkeHazir: document.getElementById("SevkeHazir").checked,
+                Tamamlandi: document.getElementById("Tamamlandi").checked,
+
+            }
+            var modelNumarasi = $('#modelNumarasi').val();
+            var tenant = document.getElementById("selectTenant").value;
+            var yas = $('#yas').val();
+
+            var adetRenk = [];
+
+            var say = parseInt('@Model.FoyAndColor.LastOrDefault().Id') * 20;
+            for (var i = 1; i <= parseInt(say); i++) {
+                var renk = document.getElementById("renk_" + i);
+                var adet = document.getElementById("adet_" + i);
+                if (renk != null && renk != undefined && renk != "" && renk != "on" && adet != null && adet != undefined && adet != "" && adet != "on") {
+                    adetRenk.push({ 'Renk': renk.value, 'Adet': adet.value, 'Id': i });
+                }
+            }
+
+            var kesim = [];
+            for (var i = 1; i <= '@kesimCount'; i++) {
+                var kesimId = document.getElementById("kesims_" + i);
+                if (kesimId != null && kesimId != undefined && kesimId != "" && kesimId != "on") {
+
+                    var kesimcheck = document.getElementById("kesims_" + i);
+                    var kesimDurumu = kesimcheck.checked;
+
+                    var kesimSpanId = document.getElementById("kesimId_" + i)
+                    if (kesimSpanId != null && kesimSpanId != undefined && kesimSpanId != "" && kesimSpanId != "on") {
+                        kesimSpanId = document.getElementById("kesimId_" + i).innerHTML;
+                    }
+                    else {
+                        kesimSpanId = i;
+                    }
+
+                    // var kesimTarihi = document.getElementById("kesimTarihi_" + i);
+                    // if (kesimTarihi != null && kesimTarihi != undefined && kesimTarihi != "" && kesimTarihi != "on") {
+                    //     kesimTarihi = document.getElementById("kesimTarihi_" + i).value;
+                    // }
+                    kesim.push({ 'KesimId': kesimSpanId, 'State': kesimDurumu/* , 'RegisterDate': kesimTarihi */ });
+                }
+
+            }
+            var cins = [];
+
+            for (var i = 1; i <= '@cinsCounter'; i++) {
+                var cinsId = document.getElementById("cinsId_" + i);
+                if (cinsId != null && cinsId != undefined && cinsId != "" && cinsId != "on") {
+                    var cinsId = document.getElementById("cinsId_" + i).innerHTML;
+                    var cinsAdi = document.getElementById("cinsAdi_" + i).innerHTML;
+
+                    var renkAdi = document.getElementById("cinsRenk_" + i);
+                    if (renkAdi != null && renkAdi != undefined && renkAdi != "" && renkAdi != "on") {
+                        renkAdi = document.getElementById("cinsRenk_" + i).value;
+                    }
+
+                    var checkDurumu = document.getElementById("cinsDurums_" + i);
+                    var cinsDurumu = checkDurumu.checked;
+
+                    // var tarih = document.getElementById("durumTarihi_" + i);
+                    // console.log(tarih.value);
+                    // if (tarih != null && tarih != undefined && tarih != "" && tarih != "on") {
+                    //     tarih = document.getElementById("durumTarihi_" + i).value;
+                    // }
+
+                    cins.push({ 'CinsId': cinsId, 'State': cinsDurumu/* , 'RegisterDate': tarih */, 'RenkAdi': renkAdi });
+                }
+
+            }
+
+
+            var FoyDto = { "Foy": foy, "FoyAndCins": cins, "FoyAndKesim": kesim, "FoyAndColor": adetRenk };
+
+            //yaş ekelnece
+            $.ajax({
+                url: '@Url.Action("Update","Foys",new{area="ManagementPanel"})',
+                data: FoyDto,
+                method: "POST",
+                success: function () {
+                    swal({
+                        title: "Başarılı",
+                        text: "Güncelleme  Başarılı",
+                        type: "success",
+                        showCancelButton: false ,
+                        confirmButtonColor: "#DD6B55",
+                        confirmButtonText: "Tamam",
+                        closeOnConfirm: false,
+                        closeOnCancel: false
+                    });
+                    window.location.href = "@Url.Action("Index","Foys",new{area="ManagementPanel"})";
+                }
+            })
+            console.log(FoyDto);
+
+        }
+
+
+    </script>
+
+}

@@ -1,0 +1,80 @@
+﻿@model List<Tedarix.Models.Entities.Atolye>
+@{
+    Layout = "_Layout";
+}
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<style>
+
+    .dataTables_filter {
+        margin: 5px;
+    }
+</style>
+<div>
+    <button class="btn btn-primary mt-2 pull-right" onclick="window.location.href='@Url.Action("Create", "Atolye", new { area = "ManagementPanel"})'" style="float:right;width:auto;margin-top:10px"> Atolye Ekle</button>
+</div>
+<div id="demo_info" class="box"></div>
+<div class="card-body table-responsive p-0 mt-5">
+    <table class="table table-hover text-nowrap" id="example">
+        <thead>
+            <tr>
+                <th style="width:10%">İşlemler</th>
+                <th style="width:10%">Atolye </th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+
+
+                <tr>
+                    <td>
+                        <button style="margin-left:2px" class=" btn btn-primary btn-sm" onclick="window.location.href='@Url.Action("Update", "Atolye", new { area = "ManagementPanel",id=item.Id })'">Güncelle</button>
+                        <button style="margin-left:2px" class=" btn btn-danger  btn-sm" onclick="window.location.href='@Url.Action("Delete", "Atolye", new { area = "ManagementPanel", id=item.Id  })'">Sil</button>
+                    </td>
+                    <td>@item.Name</td>
+
+                </tr>
+            }
+
+
+        </tbody>
+
+    </table>
+</div>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css" />
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+
+
+@section Scripts{
+
+    <script>
+        $(document).ready(function () {
+            var q = [];
+            $('#example').dataTable({
+
+                "language": {
+                    "search": "Arama Yap:",
+                    "paginate": {
+                        "first": "İlk",
+                        "last": "Son",
+                        "next": "İlerile",
+                        "previous": "Önceki"
+
+                    },
+                    "sInfo": ""// text you want show for info section
+                }
+
+            });
+
+        });
+        function eventFired(type) {
+            let n = document.querySelector('#demo_info');
+            n.innerHTML +=
+                '<div>' + type + ' event - ' + new Date().getTime() + '</div>';
+            n.scrollTop = n.scrollHeight;
+        }
+
+
+    </script>
+
+}

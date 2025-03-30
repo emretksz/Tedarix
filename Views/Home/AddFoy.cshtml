@@ -1,0 +1,501 @@
+﻿
+<style>
+    /* Seçili durum için stil */
+    .custom-checkbox .custom-control-input:checked ~ .custom-control-label::before {
+        background-color: green; /* Yeşil renk */
+        border-color: green; /* Yeşil renk */
+    }
+
+    /* Seçili olmayan durum için stil */
+    .custom-checkbox .custom-control-input:not(:checked) ~ .custom-control-label::before {
+        background-color: #dc3545; /* Kırmızı renk */
+        border-color: #dc3545; /* Kırmızı renk */
+    }
+</style>
+@{
+    var kesimCount = ((List<Tedarix.Models.Entities.Kesim>)ViewBag.Kesim).Count;
+    var cinsCounter = ((List<Tedarix.Models.Entities.Cins>)ViewBag.Cins).Count;
+}
+
+
+<div class="alert alert-danger alert-dismissible text-center">
+    <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+    <h5><i class="icon fas fa-exclamation-triangle"></i> ÖNEMLİ!</h5>
+    <b>"YAPILDI"</b> olarak işaretlediğiniz her alanın  yapılma tarihini seçiniz!!
+</div>
+<div class="card">
+    <div class="card-header" style="background-color:lightgrey">
+        <h3 class="card-title">Ürün tanımlama</h3>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body">
+        <form>
+            <div class="row">
+                <div class="col-sm-4">
+                    <!-- text input -->
+                    <div class="form-group">
+                        <label>Model Numarası</label>
+                        <input id="modelNumarasi" type="text" class="form-control" placeholder="Model Kodu Girin..">
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <!-- text input -->
+                    <div class="form-group">
+                        <label>Firma Adı</label>
+                        <select class="form-control" id="selectTenant" name="selectTenant">
+                            @foreach (var item in (List<Tedarix.Models.Entities.Tenant>)ViewBag.Tenant)
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+                        </select>
+                        @*                         <input type="text" class="form-control" placeholder="Enter ...">
+                        *@
+                    </div>
+                </div>
+                <div class="col-sm-4">
+                    <!-- text input -->
+                    <div class="form-group">
+                        <label>Yaş Grubu</label>
+                        <input id="yas" type="text" class="form-control" placeholder="Yaş Girin...">
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <!-- /.card-body -->
+</div>
+
+<!--<div class="card card-info col-sm-6 fa-pull-left" style="margin-right: 23px !important;width: 48% !important;">
+    <div class="card-header  col-sm-12">
+        <h3 class="card-title">Renk Ekle</h3>
+    </div>-->
+<!-- /.card-header -->
+<!--<div class="card-body  col-sm-12">
+    <form>
+        <button type="button" id="addButton" class="btn btn-primary">Ekle</button>
+        <div class="row" id="adetRenk">
+        </div>
+    </form>
+</div>-->
+<!-- /.card-body -->
+<!--</div>-->
+
+<style>
+    @@media (max-width: 800px) {
+        #renkDiv {
+            width: 100% !important
+        }
+    }
+    @@media (min-width: 820px) {
+        #renkDiv {
+            width: 48% !important
+        }
+    }
+</style>
+<div class="card card-info col-sm-6 fa-pull-left" id="renkDiv" style="margin-right: 23px !important; width: 48% ">
+    <div class="card-header col-sm-12">
+        <h3 class="card-title">Renk Ekle</h3>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body col-sm-12">
+        <form>
+            <button type="button" id="addButton" class="btn btn-primary">Ekle</button>
+            <div class="row d-flex flex-wrap align-items-center mt-2" id="adetRenk">
+            </div>
+        </form>
+    </div>
+    <!-- /.card-body -->
+</div>
+
+<div class="card card-info col-sm-6 ">
+    <div class="card-header  col-sm-12">
+        <h3 class="card-title">KESİM</h3>
+    </div>
+    <!-- /.card-header -->
+    <div class="card-body  col-sm-12">
+        <form>
+
+            @foreach (var item in (List<Tedarix.Models.Entities.Kesim>)ViewBag.Kesim)
+            {
+
+                <div class="row">
+                    <div class="col-sm-12">
+                        <!-- text input -->
+                        <div class="form-group col-sm-12 row">
+                            <div class="custom-control custom-checkbox fa-pull-left  col-sm-3">
+                                <input style="margin-left:10px " class="custom-control-input " type="checkbox" id="kesims_@item.Id">
+                                <span id="kesimId_@item.Id" class="form-control" hidden>@item.Id</span>
+                                <label for="kesims_@item.Id" class="custom-control-label">@item.Name</label>
+                            </div>
+                            @*  <div class="form-group  col-sm-4">
+                                    <input type="datetime-local"
+                                           id="kesimTarihi_@item.Id"
+                                           name="kesimTarihi_@item.Id"
+                                           min="2023-06-07T00:00"
+                                           max="2099-06-14T00:00" />
+                                </div> *@
+                        </div>
+                    </div>
+                </div>
+            }
+        </form>
+    </div>
+    <!-- /.card-body -->
+</div>
+<div class="card card-info col-sm-6">
+    <div class="card-header  col-sm-12">
+        <h3 class="card-title">Cins</h3>
+    </div>
+    <div class="row ">
+        <div class="col-5 col-sm-3">
+            <label>Cins</label>
+            @foreach (var item in (List<Tedarix.Models.Entities.Cins>)ViewBag.Cins)
+            {
+                <div class="form-group">
+                    <span id="cinsAdi_@item.Id" class="form-control">@item.Name</span>
+                    <span id="cinsId_@item.Id" class="form-control" hidden>@item.Id</span>
+                </div>
+            }
+        </div>
+        <div class="col-3 col-sm-3">
+            <label>Renk</label>
+            @foreach (var item in (List<Tedarix.Models.Entities.Cins>)ViewBag.Cins)
+            {
+                <div class="form-group">
+                    <input id="cinsRenk_@item.Id" type="text" class="form-control" placeholder="Renk giriniz">
+                </div>
+            }
+        </div>
+        <div class="col-4 col-sm-2">
+            <label>Durumu</label>
+            @foreach (var item in (List<Tedarix.Models.Entities.Cins>)ViewBag.Cins)
+            {
+                <div class="form-group">
+                    <div class="custom-control custom-checkbox form-control col-sm-12" style="border:none !important; margin-left: 10px; width: 25px;">
+                        <input style="margin-left:40px" class="custom-control-input" type="checkbox" id="cinsDurums_@item.Id">
+                        <label for="cinsDurums_@item.Id" class="custom-control-label"></label>
+                    </div>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@*<<div class="card card-danger col-sm-6 " style="float:right">
+        <div class="card-header">
+            <h3 class="card-title">Cins</h3>
+        </div>
+        <div class="card-body ">
+            <form>
+                <div class="row">
+                    <div class="col-sm-3">
+                        <label>Cins</label>
+
+                        @foreach (var item in (List<Tedarix.Models.Entities.Cins>)ViewBag.Cins)
+                        {
+                            <div class="form-group">
+                                <span id="cinsAdi_@item.Id" class="form-control">@item.Name</span>
+                                <span id="cinsId_@item.Id" class="form-control" hidden>@item.Id</span>
+                            </div>
+                        }
+
+                    </div>
+                    <div class="col-sm-3">
+                        <label>Renk</label>
+                        @foreach (var item in (List<Tedarix.Models.Entities.Cins>)ViewBag.Cins)
+                        {
+                            <div class="form-group">
+                                <input id="cinsRenk_@item.Id" type="text" class="form-control" placeholder="Renk giriniz">
+                            </div>
+                        }
+
+                    </div>
+                    <div class="col-sm-2">
+                        <label>Durumu</label>
+                        <!-- text input -->
+    <!--@foreach (var item in (List<Tedarix.Models.Entities.Cins>)ViewBag.Cins)
+        {
+            <div class="form-group">
+                <div class="custom-control custom-checkbox  form-control  col-sm-12" style="border:none !important ;margin-left: 25px;width: 25px;">
+                    <input style="margin-left:40px " class="custom-control-input " type="checkbox" id="cinsDurums_@item.Id">
+                    <label for="cinsDurums_@item.Id" class="custom-control-label"> </label>
+                </div>
+            </div>
+        }
+
+    </div>-->
+    @*  <div class="col-sm-2">
+                <label>İşlem zamanı</label>
+                @foreach (var item in (List<Tedarix.Models.Entities.Cins>)ViewBag.Cins)
+                {
+                    <div class="form-group">
+
+                        <input class="form-control" type="datetime-local"
+                               id="durumTarihi_@item.Id"
+                               name="durumTarihi_@item.Id"
+                               min="2023-06-07T00:00"
+                               max="2099-06-14T00:00" />
+                    </div>
+                }
+
+            </div>
+                   </div>
+
+
+                </form>
+            </div>
+        </div> *@
+
+<div class="card  col-sm-12">
+    <div class="card-header">
+        <h2 class="card-title"> <b>Atolye Bilgisi</b></h2>
+    </div>
+    <div class="card-body ">
+        <div class="alert alert-warning alert-dismissible " style="text-align:center">
+            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
+            <h5><i class="icon fas fa-exclamation-triangle"></i> ÖNEMLİ!</h5>
+            ATOLYE İŞLEMİNİ ŞİMDİ YA DA TÜM İŞLEMLER TAMAMLANDIĞINDA SEÇEBİLİRSİNİZ!!
+        </div>
+        <center>
+
+
+
+            <form>
+                <div class="row">
+                    <div class="col-sm-5">
+                    </div>
+                    <div class="col-sm-2">
+                        <label>ATOLYE</label>
+                        <select class="form-control" id="selectAtolye" name="selectAtolye">
+                            <option>Atolye Seç</option>
+                            @foreach (var item in (List<Tedarix.Models.Entities.Atolye>)ViewBag.Atolye)
+                            {
+                                <option value="@item.Id">@item.Name</option>
+                            }
+                        </select>
+                        <!-- text input -->
+                    </div>
+
+                </div>
+
+
+                <div class="row mt-3">
+                    <div class="col-sm-12">
+                        <label>SEVK DURUMU</label>
+                        <div class="form-group">
+                            <div class="custom-control custom-checkbox  form-control  col-sm-12" style="border:none !important ;">
+                                <input style="margin-left:40px " class="custom-control-input" name="SevkeHazir" type="checkbox" id="SevkeHazir">
+                                <label for="SevkeHazir" class="custom-control-label">Sevk Edilmeye Hazır mı? </label>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+                <div class="row mt-3">
+                    <div class="col-sm-12">
+                        <label>Tamamlama Durumu</label>
+                        <div class="form-group">
+                            <div class="custom-control custom-checkbox  form-control  col-sm-12" style="border:none !important ;">
+                                <input style="margin-left:40px " class="custom-control-input" name="Tamamlandi" type="checkbox" id="Tamamlandi">
+                                <label for="Tamamlandi" class="custom-control-label">Tamamlandı Mı? </label>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+
+                <button type="button" class="btn btn-primary btn-md fa-pull-right" onclick="Tamamla()">İşlemi Kaydet <i style="margin-left:5px" class="fas fa-save"></i></button>
+
+            </form>
+        </center>
+    </div>
+</div>
+
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+@section Scripts{
+    <script>
+        function htmlSil(sira) {
+            document.getElementById('sil_' + sira).innerHTML = "";
+            document.getElementById('sil2_' + sira).innerHTML = "";
+            document.getElementById('sil3_' + sira).innerHTML = "";
+        }
+        var counter = 1;
+        //document.getElementById("addButton").addEventListener("click", function () {
+        //    var html = `<div class="col-sm-6" id='sil_${counter}'><div class="form-group"><label>Renk</label><input id="renk_${counter}" type="text" class="form-control" placeholder="Renk ..."></div> </div><div class="col-sm-4" id='sil2_${counter}'><div class="form-group"><label>Adet</label><input id="adet_${counter}" type="number" class="form-control" placeholder="Adet ..."></div></div><div class="col-sm-2" id='sil3_${counter}'><label>İşlem Yap</label><br><button  type='button' class=' btn btn-danger ' onclick='htmlSil(${counter})'>Sil</button></div>`;
+        //    var adetRenkElement = document.getElementById("adetRenk");
+        //    $('#adetRenk').append(html);
+        //    //adetRenkElement.innerHTML +=  html;
+        //    counter++;
+        //});
+
+
+
+        document.getElementById("addButton").addEventListener("click", function () {
+            var html = `<div class="d-flex flex-wrap align-items-center w-100 gap-2" id="sil_container_${counter}">
+                        <div class="col-auto">
+                            <div class="form-group">
+                                <label>Renk</label>
+                                <input id="renk_${counter}" type="text" class="form-control" placeholder="Renk ...">
+                            </div>
+                        </div>
+                        <div class="col-auto">
+                            <div class="form-group">
+                                <label>Adet</label>
+                                <input id="adet_${counter}" type="number" class="form-control" placeholder="Adet ...">
+                            </div>
+                        </div>
+                        <div class="col-auto d-flex align-items-end">
+                            <button type="button" class="btn btn-danger" onclick="htmlSil(${counter})">Sil</button>
+                        </div>
+                    </div><hr />`;
+            $("#adetRenk").append(html);
+            counter++;
+        });
+
+        function Tamamla() {
+            swal({
+                title: "Lütfen Bekleyin!",
+                text: "Ekleme yapılıyor...",
+                icon: "info",
+                buttons: false, // Tüm butonları gizlemek için
+                dangerMode: true,
+                showCancelButton: false, // İptal butonunu gizlemek için
+                showConfirmButton: false, // Onay butonunu gizlemek için
+                allowOutsideClick: false,
+                closeOnClickOutside: false,
+            });
+            const currentDate = new Date();
+            var foy = {
+                ModelCode:$('#modelNumarasi').val(),
+                TenantId:document.getElementById("selectTenant").value,
+                Age: document.getElementById("yas").value,
+                RegisterDate: currentDate,
+                AtolyeId: document.getElementById("selectAtolye").value,
+                SevkeHazir: document.getElementById("SevkeHazir").checked,
+                Tamamlandi: document.getElementById("Tamamlandi").checked,
+            }
+            var modelNumarasi = $('#modelNumarasi').val();
+            var tenant = document.getElementById("selectTenant").value;
+            var yas = document.getElementById("yas").value;
+
+
+            var adetRenk = [];
+
+            for (var i = 1; i <= parseInt(counter-1); i++) {
+                var renk = document.getElementById("renk_" + i);
+                var adet = document.getElementById("adet_" + i);
+                if (renk != null && renk != undefined && renk != "" && renk != "on" && adet != null && adet != undefined && adet != "" && adet != "on") {
+                    adetRenk.push({ 'Renk': renk.value, 'Adet': adet.value });
+                }
+            }
+
+            var kesim = [];
+            for (var i = 1; i <= '@kesimCount';i++) {
+
+                var kesimId = document.getElementById("kesims_" + i);
+                if (kesimId != null && kesimId != undefined && kesimId != "" && kesimId != "on") {
+
+                    var kesimSpanId = document.getElementById("kesimId_" + i);
+                    if (kesimSpanId != null && kesimSpanId != undefined && kesimSpanId != "" && kesimSpanId != "on")
+                    {
+                        kesimSpanId = document.getElementById("kesimId_" + i).innerHTML;
+                    }
+                    else {
+                        kesimSpanId = i;
+                    }
+
+                    var kesimcheck = document.getElementById("kesims_" + i);
+                    var kesimDurumu = kesimcheck.checked;
+
+                    // var kesimTarihi = document.getElementById("kesimTarihi_" + i);
+                    // if (kesimTarihi != null && kesimTarihi != undefined && kesimTarihi != "" && kesimTarihi != "on") {
+                    //     kesimTarihi = document.getElementById("kesimTarihi_" + i).value;
+                    // }
+                    kesim.push({ 'KesimId': kesimSpanId, 'State': kesimDurumu/* , 'RegisterDate': kesimTarihi */ });
+                }
+
+            }
+            var cins = [];
+
+            for (var i = 1; i <= '@cinsCounter'; i++) {
+
+                var cinsId = document.getElementById("cinsId_" + i);
+
+                if (cinsId != null && cinsId != undefined && cinsId != "" && cinsId != "on") {
+
+                    cinsId = document.getElementById("cinsId_" + i).innerHTML;
+
+                    var cinsAdi = document.getElementById("cinsAdi_" + i).innerHTML;
+
+                    var checkDurumu = document.getElementById("cinsDurums_" + i);
+                    var cinsDurumu = checkDurumu.checked;
+
+                    var renkAdi = document.getElementById("cinsRenk_" + i);
+
+                    if (renkAdi != null && renkAdi != undefined && renkAdi != "" && renkAdi != "on") {
+                        renkAdi = document.getElementById("cinsRenk_" + i).value;
+                    }
+                    else {
+                        renkAdi = "";
+                    }
+
+                    // var tarih = document.getElementById("durumTarihi_" + i);
+                    // if (tarih != null && tarih != undefined && tarih != "" && tarih != "on") {
+                    //     tarih = document.getElementById("durumTarihi_" + i).value;
+                    // }
+
+                    cins.push({ 'CinsId': cinsId, 'State': cinsDurumu, /* 'RegisterDate': tarih, */ 'RenkAdi': renkAdi });
+                }
+
+            }
+
+
+                //             public Foy Foy { get; set; }
+                // public List < FoyAndCins > FoyAndCins { get; set; }
+                // public List < FoyAndKesim > FoyAndKesim { get; set; }
+
+
+            if (adetRenk.length==0) {
+                swal({
+                    title: "Dikkat",
+                    text: "Renk ve Adet ekleyin! ",
+                    type: "warning",
+                    showCancelButton: false,
+                    confirmButtonColor: "#DD6B55",
+                    confirmButtonText: "Tamam",
+                    closeOnConfirm: false,
+                    closeOnCancel: false
+                });
+                return
+            }
+
+            var FoyDto = { "Foy": foy, "FoyAndCins": cins, "FoyAndKesim": kesim, "FoyAndColor": adetRenk };
+
+            ///yaş ekelnece
+            $.ajax({
+                url: '@Url.Action("Create","Foys",new{area="ManagementPanel"})',
+                data:FoyDto,
+                method:"POST",
+                success: function () {
+                    swal({
+                        title: "Başarılı",
+                        text: "Kayıt  Başarılı",
+                        type: "success",
+                        showCancelButton: false,
+                        confirmButtonColor: "#DD6B55",
+                        confirmButtonText: "Tamam",
+                        closeOnConfirm: false,
+                        closeOnCancel: false
+                    });
+                    window.location.href = "@Url.Action("Index","Foys",new{area="ManagementPanel"})";
+                }
+            })
+            console.log(FoyDto);
+
+        }
+
+
+    </script>
+
+}

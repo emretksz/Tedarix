@@ -1,0 +1,27 @@
+﻿@{
+    Layout = "_Layout"; 
+}
+
+<div class="container " style="margin-top:110px; width:50%">
+    <div class="card card-primary">
+        <div class="card-header">
+            <h3 class="card-title">Firma Ekle</h3>
+        </div>
+        <!-- /.card-header -->
+        <!-- form start -->
+        <form asp-action="Create" asp-controller="Tenant" method="post">
+            <div class="card-body">
+                <div class="form-group">
+                    <label for="exampleInputEmail1">Firma Adı</label>
+                    <input type="text" class="form-control" id="Name" name="Name" placeholder="Firma Adı">
+                </div>
+            </div>
+            <!-- /.card-body -->
+
+            <div class="card-footer">
+                <button type="submit" class="btn btn-primary">Kaydet</button>
+            </div>
+        </form>
+    </div>
+
+</div>

@@ -1,0 +1,127 @@
+﻿@model List<Tedarix.Models.Entities.Foy>
+@{
+    Layout = "_Layout";
+}
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<style>
+
+    .dataTables_filter {
+        margin: 5px;
+    }
+</style>
+
+<div id="demo_info" class="box"></div>
+
+
+<div class="card-body table-responsive p-0 mt-5">
+    <table class="table table-hover text-nowrap" id="example">
+        <thead>
+            <tr>
+                <th style="width:10%">İşlemler</th>
+                <th style="width:10%">Firma </th>
+                <th style="width:10%">Model Kodu</th>
+                <th style="width:10%">Yaş</th>
+                <th style="width:10%">Sevk Tarihi</th>
+                <th style="width:10%">Atolye</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+
+
+                <tr>
+                    <td>
+                        @if(!item.SevkEdildi==null)
+                        {
+                            
+                        <button style="margin-left:2px" class=" btn btn-primary btn-sm" onclick=" window.location.href='@Url.Action("SevkEt", "Foys", new { area = "ManagementPanel",id=item.Id })'">Sevk Et</button>
+                        }
+                        <button style="margin-left:2px" class=" btn btn-success  btn-sm" onclick="ExcelExport('@item.Id')">Excel Dökümü</button>
+                    </td>
+                    <td>@item.Tenant.Name</td>
+                    <td>@item.ModelCode</td>
+                    <td>@item.Age</td>
+                    <td>@(item.SevkTarihi != null ? (item.SevkTarihi.ToString() != "1.01.0001 00:00:00" ? item.SevkTarihi:""):"")</td>
+                    @if (item.Atolye != null)
+                    {
+                        <td>
+                            <div class="row">
+                                <b><i class="nav-icon far fa-circle text-info" style="margin-right:5px;margin-top:5px"></i></b>
+                                <p class="text"><b>@item.Atolye.Name</b></p>
+                            </div>
+
+                        </td>
+
+                    }
+                    else
+                    {
+
+                        <td>
+                            <div class="row">
+                                <b><i class="nav-icon far fa-circle text-danger" style="margin-right:5px;margin-top:5px"></i></b>
+                                <p class="text"><b>Gönderilmedi</b></p>
+                            </div>
+
+                        </td>
+                    }
+
+                </tr>
+            }
+
+
+        </tbody>
+
+    </table>
+</div>
+
+
+
+
+
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css" />
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+
+
+@section Scripts{
+
+    <script>
+        $(document).ready(function () {
+            var q = [];
+            $('#example').dataTable({
+
+                "language": {
+                    "search": "Arama Yap:",
+                    "paginate": {
+                        "first": "İlk",
+                        "last": "Son",
+                        "next": "İlerile",
+                        "previous": "Önceki"
+
+                    },
+                    "sInfo": ""// text you want show for info section
+                }
+
+            });
+
+        });
+        function eventFired(type) {
+            let n = document.querySelector('#demo_info');
+            n.innerHTML +=
+                '<div>' + type + ' event - ' + new Date().getTime() + '</div>';
+            n.scrollTop = n.scrollHeight;
+        }
+        function ExcelExport(id) {
+           $.ajax({
+                url:'@Url.Action("ExcelExport", "Foys", new { area = "ManagementPanel"})?id='+id+'&sevk='+true,
+               success: function (path) {
+                    window.location.href = '@Url.Action("Dowloand", "Foys", new { area = "ManagementPanel" })?path=' + path;
+               }
+            })
+        }
+
+
+    </script>
+
+}

@@ -1,0 +1,195 @@
+﻿@model List<Tedarix.Areas.ManagementPanel.Models.FoyDtoIndex>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="row" style="margin-top:10px">
+    <div class="col-lg-3 col-md-3  col-sm-3">
+        <!-- small box -->
+
+    </div>
+    <div class="col-lg-3  col-md-3  col-sm-3">
+        <!-- small box -->
+        <div class="small-box bg-info">
+            <div class="inner">
+                <h3>@(Convert.ToInt32(@ViewBag.YapilanFoy))</h3>
+                <p>Toplam Foy</p>
+            </div>
+            <div class="icon">
+                <i class="ion ion-bag"></i>
+            </div>
+            <a href="@Url.Action("Index","Foys",new{area="ManagementPanel"})" class="small-box-footer">Listeyi Gör <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+    <!-- ./col -->
+    <div class="col-lg-3  col-md-3  col-sm-3">
+        <!-- small box -->
+        <div class="small-box bg-success">
+            <div class="inner">
+
+                <h3>
+                    @(Convert.ToInt32(ViewBag.TamamlanmayanFoyler)) <sup style="font-size: 20px">%</sup>
+                </h3>
+                <p>Tamamlanmayan Foy</p>
+            </div>
+            <div class="icon">
+                <i class="ion ion-stats-bars"></i>
+            </div>
+            <a href="@Url.Action("Index","Foys",new{area="ManagementPanel"})" class="small-box-footer">Listeyi Gör <i class="fas fa-arrow-circle-right"></i></a>
+        </div>
+    </div>
+    <div class="col-lg-3   col-md-3  col-sm-3">
+        <!-- small box -->
+
+    </div>
+    <!-- ./col -->
+    @* <div class="col-lg-3 col-6">
+    <!-- small box -->
+
+    </div> *@
+    <!-- ./col -->
+    @*     <div class="col-lg-3 col-6">
+    <!-- small box -->
+
+    </div> *@
+    <!-- ./col -->
+</div>
+<!-- /.row -->
+<!-- Main row -->
+<hr />
+<div class="row">
+    <div class="col-md-12">
+        @if (Model.Count() == 0)
+        {
+            <center>
+                <span class="description">Bekleyen Foy Yok</span>
+            </center>
+
+        }
+        <!-- The time line -->
+        <div class="timeline">
+            <!-- timeline time label -->
+            @*    <div class="time-label">
+            <span class="bg-red">Bugünün Tarihi : @DateTime.Now</span>
+            </div> *@
+            <!-- /.timeline-label -->
+            <!-- timeline item -->
+            <!-- END timeline item -->
+            <!-- timeline item -->
+            @foreach (var item in Model)
+            {
+                @*   <div>
+            <i class="fa fa-truck bg-green"></i>
+            <div class="timeline-item">
+            <span class="time"><i class="fas fa-clock"></i>  @item.Foy.RegisterDate.ToShortDateString()</span>
+            <h3 class="timeline-header no-border"><a href="#">Model Kodu :<b>@item.Foy.ModelCode</b> / <b>Yaş: </b> @item.Foy.Age / <b>Firma Adı</b> @item.Foy.Tenant.Name </a></h3>
+            </div>
+            </div> *@
+                <div>
+                    <i class="fas fa-envelope bg-blue"></i>
+                    <div class="timeline-item" style="background-color:#e5e5e5">
+                        <span class="time" style="font-size :17px"><i class="fas fa-clock"></i> <b>@item.Foy.RegisterDate.ToShortDateString()</b></span>
+                        <h3 class="timeline-header"><a href="#"></a> Foy Bilgileri</h3>
+                        <div class="timeline-body">
+                            <b>Model Kodu :</b>@item.Foy.ModelCode <br>
+                            <b>Yaş: </b> @item.Foy.Age <br>
+                            <b>Firma Adı</b> @item.Foy.Tenant.Name
+                        </div>
+                        <div class="timeline-footer" style="display: flex; justify-content: flex-end;">
+                            <button id="goster_@item.Foy.Id" class="btn btn-primary " onclick="goster('@item.Foy.Id')" >Listeyi Aç</button>
+                            <button id="gizle_@item.Foy.Id" class="btn btn-danger  " onclick="gizle('@item.Foy.Id')" hidden>Listeyi Kapat</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- END timeline item -->
+                int counter = 1;
+
+                @foreach (var kesim in item.FoyAndKesim)
+                {
+
+                    <div id="kesimgizle_@(item.Foy.Id)_@counter" hidden>
+                        <i class="fas  fa-clock bg-gray"></i>
+                        <div class="timeline-item">
+                            <span class="time"><small class="badge badge-danger"><i class="far fa-clock"></i> @(kesim.GecenGun.Days == 0 ? "0   Geçen Gün" : kesim.GecenGun.TotalDays.ToString().Substring(0, 3) + " Geçen Gün ")</small> </span>
+                            <h3 class="timeline-header"><a href="#">@kesim.KesimAdi</a><b style="font-size:10px;margin-left:10px">Bekleniyor</b></h3>
+                        </div>
+                    </div>
+                    counter++;
+                }
+
+                counter = 1;
+                @foreach (var cins in item.FoyAndCins)
+                {
+
+
+
+                    <div id="cinsgizle_@(item.Foy.Id)_@counter" hidden>
+                        <i class="fas  fa-clock bg-gray"></i>
+                        <div class="timeline-item">
+                            <span class="time"><small class="badge badge-danger"><i class="far fa-clock"></i> @(cins.GecenGun.Days == 0 ? "0   Geçen Gün" : cins.GecenGun.TotalDays.ToString().Substring(0, 3) + " Geçen Gün ")</small> </span>
+                            <h3 class="timeline-header"><a href="#">@cins.CinsAdi</a><b style="font-size:10px;margin-left:10px">Bekleniyor</b></h3>
+                        </div>
+                    </div>
+                    counter++;
+
+                }
+
+                @*        @foreach (var cins in item.FoyAndCins)
+            {
+            <div>
+            <i class="fas fa-clock bg-gray"></i>  <span class="time" style="color:red"><i class="fas fa-clock"></i>@cins.GecenGun</span>
+            </div>
+            } *@
+            }
+            <hr />
+        </div>
+    </div>
+    <!-- /.col -->
+</div>
+@section Scripts{
+    <script>
+
+        function goster(id)
+        {
+    
+            for (var i = 1; i <= 30; i++) {
+                var hiddenDiv = document.getElementById('kesimgizle_' + id + "_" + i);
+                console.log(i);
+                if (hiddenDiv != null && hiddenDiv != undefined && hiddenDiv!="") {
+                    $('#kesimgizle_' + id + "_" + i).removeAttr("hidden");
+
+                }
+            }
+            for (var i = 1; i <= 30; i++) {
+                var hiddenDiv = document.getElementById('cinsgizle_' + id + "_" + i);
+                if (hiddenDiv != null && hiddenDiv != undefined && hiddenDiv != "") {
+                    $('#cinsgizle_' + id + "_" + i).removeAttr("hidden");
+
+                }
+            }
+            $('#gizle_' + id).removeAttr("hidden");
+            $('#goster_' + id).attr("hidden", "hidden");
+        }
+        function gizle(id) {
+            $('#gizle_' + id).attr("hidden", "hidden");
+            $('#goster_' + id).removeAttr("hidden");
+            for (var i = 1; i <= 30; i++) {
+                var hiddenDiv = document.getElementById('kesimgizle_' + id + "_" + i);
+                console.log(hiddenDiv);
+
+                if (hiddenDiv != null && hiddenDiv != undefined && hiddenDiv != "") {
+                    $('#kesimgizle_' + id + "_" + i).attr("hidden","hidden");
+
+                }
+            }
+            for (var i = 1; i <= 30; i++) {
+                var hiddenDiv = document.getElementById('cinsgizle_' + id + "_" + i);
+                if (hiddenDiv != null && hiddenDiv != undefined && hiddenDiv != "") {
+                    $('#cinsgizle_' + id + "_" + i).attr("hidden", "hidden");
+
+                }
+            }
+        }
+
+    </script>
+}

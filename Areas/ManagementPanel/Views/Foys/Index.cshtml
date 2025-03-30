@@ -1,0 +1,226 @@
+﻿@model List<Tedarix.Models.Entities.Foy>
+@{
+    Layout = "_Layout";
+}
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+<script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+<style>
+
+    .dataTables_filter {
+        margin: 5px;
+    }
+</style>
+
+<div id="demo_info" class="box"></div>
+
+
+<div class="card-body table-responsive p-0 mt-5">
+    <table class="table table-hover text-nowrap" id="example">
+        <thead>
+            <tr>
+                <th style="width:10%">İşlemler</th>
+                <th style="width:10%">Firma </th>
+                <th style="width:10%">Model Kodu</th>
+                <th style="width:10%">Yaş</th>
+                <th style="width:10%">Eklenme Tarihi</th>
+                <th style="width:10%">Atolye</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+
+
+                <tr>
+                    <td>
+                        @*                     <a class="nav-link" asp-area="ManagementPanel" asp-controller="Foys" asp-action="Index">Go to Anan</a> *@
+                        @*     <button class=" btn btn-warning"  onclick="window.location.href='@Url.Action("Update","Foys",new{area="ManagementPanel"})'">Güncelle</button> *@
+                        <button style="margin-left:2px" class=" btn btn-primary btn-sm" onclick="window.location.href='@Url.Action("Update", "Foys", new { area = "ManagementPanel",foyId=item.Id })'">GÜNCELLE</button>
+                        <button style="margin-left:2px" class=" btn btn-danger  btn-sm" onclick="Delete('@item.Id')">Sil</button>
+@*                         <button style="margin-left:2px" class=" btn btn-success  btn-sm" onclick="Arsivle('@item.Id')">Arşivle</button>
+ *@                    </td>
+                    <td>@item.Tenant.Name</td>
+                    <td>@item.ModelCode</td>
+                    <td>@item.Age</td>
+                    <td>@item.RegisterDate</td>
+                    @if (item.Atolye != null)
+                    {
+                        <td>
+                            <div class="row">
+                                <b><i class="nav-icon far fa-circle text-info" style="margin-right:5px;margin-top:5px"></i></b>
+                                <p class="text"><b>@item.Atolye.Name</b></p>
+                            </div>
+
+                        </td>
+
+                    }
+                    else
+                    {
+
+                        <td>
+                            <div class="row">
+                                <b><i class="nav-icon far fa-circle text-danger" style="margin-right:5px;margin-top:5px"></i></b>
+                                <p class="text"><b>Gönderilmedi</b></p>
+                            </div>
+
+                        </td>
+                    }
+
+                </tr>
+            }
+
+
+        </tbody>
+
+    </table>
+</div>
+
+
+
+
+
+
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.13.1/css/jquery.dataTables.min.css" />
+<script type="text/javascript" charset="utf8" src="https://cdn.datatables.net/1.13.1/js/jquery.dataTables.min.js"></script>
+
+
+@section Scripts{
+
+    <script>
+
+        function Delete(id){
+
+            swal({
+                title: "Dikkat!",
+                text: "Silmek istiyor musunuz!",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+                buttons: ["Hayır", "Evet"],
+            }).then((willDelete) => {
+                if (willDelete) {
+
+                    $.ajax({
+                        url: '@Url.Action("Delete", "Foys", new { area = "ManagementPanel"})?foyId=' + id,
+                        success: function () {
+                            window.location.reload();
+                        }
+                    })
+                }
+            });
+        }  
+        function Arsivle(id){
+
+            swal({
+                title: "Dikkat!",
+                text: "Arsivlemek İstiyor musunuz?",
+                icon: "warning",
+                buttons: true,
+                dangerMode: true,
+                buttons: ["Hayır", "Evet"],
+            }).then((willDelete) => {
+                if (willDelete) {
+
+                    $.ajax({
+                        url: '@Url.Action("Arsivle", "Foys", new { area = "ManagementPanel"})?foyId=' + id,
+                        success: function () {
+                            window.location.reload();
+                        }
+                    })
+                }
+            });
+        }
+        $(document).ready(function () {
+            var q = [];
+            // $.ajax({
+            //     url: '@Url.Action("TempsIndexReturnJson","Temp")',
+            //     success: function (datam) {
+            //         var qqq = JSON.parse(datam);
+            //         console.log(qqq);
+
+            //         // for (var i = 0; i < qqq.length; i++) {
+            //         //     //var ssss = [
+            //         //     //   ];
+            //         //     q.push({ 'Id': qqq[i].TenantId, 'TenantName': qqq[i].TenantName, 'Count': qqq[i].ShippingCount });
+
+            //         // }
+            //         for (var i = 0; i < qqq.length; i++) {
+            //             //var ssss = [
+            //             //   ];
+            //             q.push({ 'Id': i, 'TenantName': "ss"+i, 'Count': "s", });
+
+            //         }
+
+
+            //     }
+
+            // });
+            // for (var i = 0; i < 50; i++) {
+            //     //var ssss = [
+            //     //   ];
+            //     q.push({ 'Id': i, 'TenantName': "ss" + i, 'Count': "s", Islemler:"i" });
+
+            // }
+            // $('#example').dataTable({
+            //     "data": q,
+            //     "autoWidth": true,
+
+            //     "columns": [
+            //         {
+            //             "data": "Islemler",
+            //             'title': 'İşlem',
+            //             "render": function (data, type, row, meta) {
+            //                 return '<div class="input-group-prepend"><button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">Action</button><div class="dropdown-menu" style= ""> <a class="dropdown-item" href = "#" > Action </a><a class="dropdown-item" href = "#"> Another action </a><a class="dropdown-item" href = "#"> Something else here </a><div class= "dropdown-divider"> </div><a class= "dropdown-item" href="#"> Separated link</a></div></div>'
+
+
+            //             }
+            //         },
+            //         { "data": "Id" },
+            //         { 'data': 'TenantName', 'title': 'Firma Adı' },
+            //         { 'data': 'Count', 'title': 'Sipariş Miktarı' },
+
+            //     ],
+
+            //     "language": {
+            //         "search": "Arama Yap:",
+            //         "paginate": {
+            //             "first": "İlk",
+            //             "last": "Son",
+            //             "next": "İlerile",
+            //             "previous": "Önceki"
+
+            //         },
+            //         "sInfo": "",// text you want show for info section
+
+
+            //     },
+            // })
+
+            $('#example').dataTable({
+
+                "language": {
+                    "search": "Arama Yap:",
+                    "paginate": {
+                        "first": "İlk",
+                        "last": "Son",
+                        "next": "İlerile",
+                        "previous": "Önceki"
+
+                    },
+                    "sInfo": ""// text you want show for info section
+                }
+
+            });
+
+        });
+        function eventFired(type) {
+            let n = document.querySelector('#demo_info');
+            n.innerHTML +=
+                '<div>' + type + ' event - ' + new Date().getTime() + '</div>';
+            n.scrollTop = n.scrollHeight;
+        }
+
+
+    </script>
+
+}

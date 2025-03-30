@@ -1,0 +1,28 @@
+﻿@{
+    Layout = "_Layout";
+}
+@model Tedarix.Models.Entities.Tenant
+
+<div class="container " style="margin-top:110px; width:50%">
+<div class="card card-primary">
+    <div class="card-header">
+        <h3 class="card-title">Firma Güncelle</h3>
+    </div>
+    <!-- /.card-header -->
+    <!-- form start -->
+    <form asp-action="Update" asp-controller="Tenant" method="post">
+        @Html.Hidden("Id",Model.Id)
+        <div class="card-body">
+            <div class="form-group">
+                <label for="exampleInputEmail1">Firma Adı</label>
+                    <input type="text" class="form-control" value="@Model.Name" name="Name" id="Name" placeholder="Firma Adı">
+            </div>
+        </div>
+        <!-- /.card-body -->
+
+        <div class="card-footer">
+            <button type="submit" class="btn btn-primary">Kaydet</button>
+        </div>
+    </form>
+</div>
+</div>
